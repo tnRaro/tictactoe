@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { atomWithReset, useResetAtom } from "jotai/utils";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Board } from "../components/Board";
 import { Button } from "../components/Button";
 import { Flex } from "../components/Flex";
@@ -31,7 +31,7 @@ const useGameState = () => {
       (acc, placedPiece, index) => acc | (placedPiece << index),
       0
     );
-    const winPatterns = [7, 56, 73, 84, 146, 273, 292, 448];
+    const winPatterns = [7, 56, 448, 73, 146, 292, 273, 84];
     const winPattern = winPatterns.find((pattern) => (placedPiecesBitfield & pattern) === pattern);
     if (winPattern != null) {
       setGameState(playerTurn);
@@ -87,11 +87,106 @@ const useReset = () => {
   return reset;
 };
 
+const useAi = (placePiece: (index: number, player: TPlayer) => void) => {
+  const [board] = useAtom(boardAtom);
+  const [playerTurn] = useAtom(playerTurnAtom);
+  const [ai] = useAtom(aiAtom);
+  const firstRef = useRef(true);
+  useEffect(() => {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return;
+    }
+    if (!ai) {
+      return;
+    }
+    if (playerTurn !== 3) {
+      return;
+    }
+    const id = setTimeout(() => {
+      const aiPlaced = board.map((piece) => +(piece === playerTurn));
+      const aiPlacedBitfield = aiPlaced.reduce((acc, piece, index) => acc | (piece << index), 0);
+      const humanPlaced = board.map((piece) => +(piece === (playerTurn + 2) % 4));
+      const humanPlacedBitfield = humanPlaced.reduce(
+        (acc, piece, index) => acc | (piece << index),
+        0
+      );
+      const winPatterns = [7, 56, 448, 73, 146, 292, 273, 84];
+      const firstPatterns = winPatterns
+        .filter((pattern) => (pattern & ~humanPlacedBitfield) === pattern)
+        .filter((pattern) => (pattern & ~aiPlacedBitfield) !== pattern)
+        .filter(
+          (pattern) =>
+            Array.from({ length: 9 }).reduce<number>(
+              (acc, _, index) => acc + (((pattern & ~aiPlacedBitfield) >> index) & 1),
+              0
+            ) === 1
+        );
+      if (firstPatterns.length > 0) {
+        const point = firstPatterns[(Math.random() * firstPatterns.length) | 0] & ~aiPlacedBitfield;
+        for (let i = 0; i < 9; i++) {
+          if (((point >> i) & 1) === 1) {
+            return placePiece(i, playerTurn);
+          }
+        }
+      }
+      const secondPatterns = winPatterns
+        .filter((pattern) => (pattern & ~aiPlacedBitfield) === pattern)
+        .filter((pattern) => (pattern & ~humanPlacedBitfield) !== pattern)
+        .filter(
+          (pattern) =>
+            Array.from({ length: 9 }).reduce<number>(
+              (acc, _, index) => acc + (((pattern & ~humanPlacedBitfield) >> index) & 1),
+              0
+            ) === 1
+        );
+      if (secondPatterns.length > 0) {
+        const point =
+          secondPatterns[(Math.random() * secondPatterns.length) | 0] & ~humanPlacedBitfield;
+        for (let i = 0; i < 9; i++) {
+          if (((point >> i) & 1) === 1) {
+            return placePiece(i, playerTurn);
+          }
+        }
+      }
+      const thirdPatterns = winPatterns
+        .filter((pattern) => (pattern & ~aiPlacedBitfield) === pattern)
+        .filter((pattern) => (pattern & ~humanPlacedBitfield) !== pattern)
+        .filter(
+          (pattern) =>
+            Array.from({ length: 9 }).reduce<number>(
+              (acc, _, index) => acc + (((pattern & ~humanPlacedBitfield) >> index) & 1),
+              0
+            ) === 1
+        );
+      if (thirdPatterns.length > 0) {
+        const point =
+          thirdPatterns[(Math.random() * thirdPatterns.length) | 0] & ~humanPlacedBitfield;
+        for (let i = 0; i < 9; i++) {
+          if (((point >> i) & 1) === 2) {
+            return placePiece(i, playerTurn);
+          }
+        }
+      }
+      const emptyPieces = board
+        .map((piece, index) => [piece, index])
+        .filter(([piece]) => piece === 0);
+      if (emptyPieces.length > 0) {
+        const next = emptyPieces[(Math.random() * emptyPieces.length) | 0][1];
+        placePiece(next, playerTurn);
+      }
+    }, Math.random() * 300 + 200);
+    return () => clearTimeout(id);
+  }, [playerTurn]);
+  return ai;
+};
+
 const Page: React.VoidFunctionComponent<unknown> = () => {
   const [board, placePiece] = useBoard();
   const { gameState, winPattern } = useGameState();
   const playerTurn = usePlayerTurn();
   const reset = useReset();
+  const ai = useAi(placePiece);
 
   return (
     <>
@@ -107,6 +202,11 @@ const Page: React.VoidFunctionComponent<unknown> = () => {
                 key={index}
                 type={piece}
                 onClick={() => {
+                  if (ai) {
+                    if (playerTurn !== 1) {
+                      return;
+                    }
+                  }
                   placePiece(index, playerTurn);
                 }}
                 highlight={(winPattern & (1 << index)) !== 0}
