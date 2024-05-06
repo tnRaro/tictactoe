@@ -54,7 +54,7 @@ describe("state", () => {
   function run(scenario: { pos: number, state: GameState }[]) {
     const { getState } = gameStore;
     const a = scenario.map(({ pos }) => {
-      getState().click(pos);
+      getState().place(pos);
       getState().next();
       return {
         pos,
@@ -71,12 +71,12 @@ describe("state", () => {
   }
 });
 
-test("click", () => {
+test("place", () => {
   const { getState } = gameStore;
   expect(getState().board).toStrictEqual([0, 0, 0, 0, 0, 0, 0, 0, 0]);
-  expect(getState().click(4)).toBe(true);
+  expect(getState().place(4)).toBe(true);
   expect(getState().board).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
-  expect(getState().click(4)).toBe(false);
+  expect(getState().place(4)).toBe(false);
   expect(getState().board).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 });
 
@@ -93,8 +93,8 @@ test("next", () => {
 
 test("reset", () => {
   const { getState, getInitialState } = gameStore;
-  getState().click(5);
-  getState().click(3);
+  getState().place(5);
+  getState().place(3);
 
   getState().reset();
 
@@ -123,7 +123,7 @@ describe("howToWin", () => {
   function run(scenario: number[]) {
     const { getState } = gameStore;
     scenario.forEach((pos) => {
-      getState().click(pos);
+      getState().place(pos);
       getState().next();
     });
   }

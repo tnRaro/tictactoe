@@ -26,7 +26,7 @@ export interface Game {
   turn: PlayerTurn;
   state: () => GameState;
   reset: () => void;
-  click: (n: number) => boolean;
+  place: (n: number) => boolean;
   next: () => void;
   howToWin: () => number | undefined;
   _placedPieces: (turn: PlayerTurn) => number;
@@ -58,7 +58,7 @@ export const gameStore = createStore<Game>((set, get) => ({
     board: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     turn: PlayerTurn.P1,
   })),
-  click: (n: number) => {
+  place: (n: number) => {
     if (!isInbound(n)) {
       throw new RangeError(`out of range: 0 <= ${n} < 9`);
     }
@@ -74,7 +74,7 @@ export const gameStore = createStore<Game>((set, get) => ({
   },
   ai: () => set(produce((state: Game) => {
     const index = pickAi(state.board, state.turn, Math.random());
-    if (index && state.click(index)) {
+    if (index && state.place(index)) {
       state.next();
     }
   })),
