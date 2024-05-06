@@ -123,7 +123,7 @@ export function pickAi(board: BoardState[], playerTurn: PlayerTurn, random: numb
   }
 
   function pattern(a: number, b: number) {
-    return [7, 56, 448, 73, 146, 292, 273, 84]
+    return WinPatterns
       .filter((win) => subset(win, ~b))
       .filter((win) => !subset(win, ~a))
       .filter(
