@@ -95,8 +95,8 @@ function adversaryFor(turn: PlayerTurn) {
 }
 
 export function pickAi(board: BoardState[], playerTurn: PlayerTurn, random: number) {
-  const a = bit(playerTurn);
-  const b = bit(adversaryFor(playerTurn));
+  const a = bit(board, playerTurn);
+  const b = bit(board, adversaryFor(playerTurn));
 
   const pattenrs = [
     [a, b],
@@ -135,15 +135,15 @@ export function pickAi(board: BoardState[], playerTurn: PlayerTurn, random: numb
     return (a & b);
   }
 
-  function bit(turn: number) {
-    const x = board.map((piece) => +(piece === turn));
-    return x.reduce(
-      (acc, piece, index) => acc | (piece << index),
-      0
-    );
-  }
-
   function pick<T>(items: T[]): T {
     return items[random * items.length | 0];
   }
+}
+
+function bit(board: BoardState[], turn: number) {
+  const x = board.map((piece) => +(piece === turn));
+  return x.reduce(
+    (acc, piece, index) => acc | (piece << index),
+    0
+  );
 }
