@@ -74,6 +74,7 @@ export const gameStore = createStore<Game>((set, get) => ({
     }
   },
   actAi: () => set(produce((state: Game) => {
+    if (state.state() !== GameState.Playing) return;
     const index = pickAi(state.board, state.turn, Math.random());
     if (index != null) {
       state.board[index] = boardStateFor(state.turn);
