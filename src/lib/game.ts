@@ -126,15 +126,6 @@ export function pickAi(board: BoardState[], playerTurn: PlayerTurn, random: numb
         ) === 1
       );
   }
-
-  function subset(a: number, b: number) {
-    return intersection(a, b) === a
-  }
-
-  function intersection(a: number, b: number) {
-    return (a & b);
-  }
-
   function pick<T>(items: T[]): T {
     return items[random * items.length | 0];
   }
@@ -146,4 +137,12 @@ function bit(board: BoardState[], turn: number) {
     (acc, piece, index) => acc | (piece << index),
     0
   );
+}
+
+function subset(a: number, b: number) {
+  return intersection(a, b) === a
+}
+
+function intersection(a: number, b: number) {
+  return (a & b);
 }
