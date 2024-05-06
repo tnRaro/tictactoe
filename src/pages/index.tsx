@@ -7,7 +7,7 @@ import { Piece } from "../components/Piece";
 import { Text } from "../components/Text";
 import { GameState, PlayerTurn, gameStore } from "../lib/game";
 
-const Page: React.VoidFunctionComponent<unknown> = () => {
+const Page = () => {
   const ai = true;
   const { board, place, next, reset, state, turn, howToWin, actAi } = useStore(gameStore);
 
