@@ -27,6 +27,7 @@ export interface Game {
   state: () => GameState;
   reset: () => void;
   place: (n: number) => boolean;
+  actAi: () => void;
   next: () => void;
   howToWin: () => number | undefined;
   _placedPieces: (turn: PlayerTurn) => number;
@@ -72,10 +73,11 @@ export const gameStore = createStore<Game>((set, get) => ({
       return true;
     }
   },
-  ai: () => set(produce((state: Game) => {
+  actAi: () => set(produce((state: Game) => {
     const index = pickAi(state.board, state.turn, Math.random());
-    if (index && state.place(index)) {
-      state.next();
+    if (index != null) {
+      state.board[index] = boardStateFor(state.turn);
+      state.turn = adversaryFor(state.turn);
     }
   })),
   next: () => set((state) => ({
