@@ -46,14 +46,7 @@ const Page: React.VoidFunctionComponent<unknown> = () => {
         {s !== GameState.Playing && (
           <>
             <Flex align="center" gap="half">
-              {s === GameState.Draw ? (
-                "Draw!"
-              ) : (
-                <>
-                  <Piece as="div" type={s} css={{ width: "1rem", height: "1rem" }} />
-                  {"won!"}
-                </>
-              )}
+              {displayState()}
             </Flex>
             <Button onClick={reset}>retry!</Button>
           </>
@@ -69,6 +62,22 @@ const Page: React.VoidFunctionComponent<unknown> = () => {
       </Flex>
     </>
   );
+
+  function displayState() {
+    switch (s) {
+      case GameState.Playing: return;
+      case GameState.Draw: return "Draw!";
+      case GameState.P1Won:
+      case GameState.P2Won: {
+        return (
+          <>
+            <Piece as="div" type={s} css={{ width: "1rem", height: "1rem" }} />
+            {"won!"}
+          </>
+        )
+      }
+    }
+  }
 };
 
 export default Page;
