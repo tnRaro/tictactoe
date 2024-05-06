@@ -28,6 +28,7 @@ export interface Game {
   reset: () => void;
   click: (n: number) => boolean;
   next: () => void;
+  howToWin: () => number | undefined;
   _placedPieces: (turn: PlayerTurn) => number;
 }
 
@@ -80,6 +81,12 @@ export const gameStore = createStore<Game>((set, get) => ({
   next: () => set((state) => ({
     turn: adversaryFor(state.turn),
   })),
+  howToWin: () => {
+    const state = get().state();
+    if (state !== GameState.P1Won && state !== GameState.P2Won) return;
+    const p = bit(get().board, state);
+    return WinPatterns.find((pattern) => subset(pattern, p));
+  },
 }));
 
 function boardStateFor(turn: PlayerTurn) {

@@ -100,3 +100,31 @@ test("reset", () => {
 
   expect(getState()).toStrictEqual(getInitialState());
 });
+
+describe("howToWin", () => {
+  test("human win", () => {
+    const { getState } = gameStore;
+    run([4, 5, 0, 8, 2, 6, 1,]);
+    expect(getState().howToWin()).toBe(7);
+  })
+
+  test("ai win", () => {
+    const { getState } = gameStore;
+    run([0, 3, 1, 2, 6, 4, 7, 5,]);
+    expect(getState().howToWin()).toBe(56);
+  })
+
+  test("draw", () => {
+    const { getState } = gameStore;
+    run([4, 0, 2, 6, 3, 5, 7, 1, 8,]);
+    expect(getState().howToWin()).toBeUndefined();
+  })
+
+  function run(scenario: number[]) {
+    const { getState } = gameStore;
+    scenario.forEach((pos) => {
+      getState().click(pos);
+      getState().next();
+    });
+  }
+})
