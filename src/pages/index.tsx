@@ -6,11 +6,13 @@ import { Button } from "../components/Button";
 import { Flex } from "../components/Flex";
 import { Piece } from "../components/Piece";
 import { Text } from "../components/Text";
+import { pickAi } from "../lib/game";
 
+// 1 인간 3 AI
 type TPlayer = 1 | 3;
 type TPiece = 0 | TPlayer;
-type TBoard = [TPiece, TPiece, TPiece, TPiece, TPiece, TPiece, TPiece, TPiece, TPiece];
 type TGameStateDraw = 2;
+type TBoard = [TPiece, TPiece, TPiece, TPiece, TPiece, TPiece, TPiece, TPiece, TPiece];
 type TGameState = TGameStateDraw | TPlayer | null;
 
 const boardAtom = atomWithReset<TBoard>([0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -104,77 +106,8 @@ const useAi = (placePiece: (index: number, player: TPlayer) => void) => {
       return;
     }
     const id = setTimeout(() => {
-      const aiPlaced = board.map((piece) => +(piece === playerTurn));
-      const aiPlacedBitfield = aiPlaced.reduce((acc, piece, index) => acc | (piece << index), 0);
-      const humanPlaced = board.map((piece) => +(piece === (playerTurn + 2) % 4));
-      const humanPlacedBitfield = humanPlaced.reduce(
-        (acc, piece, index) => acc | (piece << index),
-        0
-      );
-      const winPatterns = [7, 56, 448, 73, 146, 292, 273, 84];
-      const firstPatterns = winPatterns
-        .filter((pattern) => (pattern & ~humanPlacedBitfield) === pattern)
-        .filter((pattern) => (pattern & ~aiPlacedBitfield) !== pattern)
-        .filter(
-          (pattern) =>
-            Array.from({ length: 9 }).reduce<number>(
-              (acc, _, index) => acc + (((pattern & ~aiPlacedBitfield) >> index) & 1),
-              0
-            ) === 1
-        );
-      if (firstPatterns.length > 0) {
-        const point = firstPatterns[(Math.random() * firstPatterns.length) | 0] & ~aiPlacedBitfield;
-        for (let i = 0; i < 9; i++) {
-          if (((point >> i) & 1) === 1) {
-            return placePiece(i, playerTurn);
-          }
-        }
-      }
-      const secondPatterns = winPatterns
-        .filter((pattern) => (pattern & ~aiPlacedBitfield) === pattern)
-        .filter((pattern) => (pattern & ~humanPlacedBitfield) !== pattern)
-        .filter(
-          (pattern) =>
-            Array.from({ length: 9 }).reduce<number>(
-              (acc, _, index) => acc + (((pattern & ~humanPlacedBitfield) >> index) & 1),
-              0
-            ) === 1
-        );
-      if (secondPatterns.length > 0) {
-        const point =
-          secondPatterns[(Math.random() * secondPatterns.length) | 0] & ~humanPlacedBitfield;
-        for (let i = 0; i < 9; i++) {
-          if (((point >> i) & 1) === 1) {
-            return placePiece(i, playerTurn);
-          }
-        }
-      }
-      const thirdPatterns = winPatterns
-        .filter((pattern) => (pattern & ~aiPlacedBitfield) === pattern)
-        .filter((pattern) => (pattern & ~humanPlacedBitfield) !== pattern)
-        .filter(
-          (pattern) =>
-            Array.from({ length: 9 }).reduce<number>(
-              (acc, _, index) => acc + (((pattern & ~humanPlacedBitfield) >> index) & 1),
-              0
-            ) === 1
-        );
-      if (thirdPatterns.length > 0) {
-        const point =
-          thirdPatterns[(Math.random() * thirdPatterns.length) | 0] & ~humanPlacedBitfield;
-        for (let i = 0; i < 9; i++) {
-          if (((point >> i) & 1) === 2) {
-            return placePiece(i, playerTurn);
-          }
-        }
-      }
-      const emptyPieces = board
-        .map((piece, index) => [piece, index])
-        .filter(([piece]) => piece === 0);
-      if (emptyPieces.length > 0) {
-        const next = emptyPieces[(Math.random() * emptyPieces.length) | 0][1];
-        placePiece(next, playerTurn);
-      }
+      const i = pickAi(board, playerTurn, Math.random())!;
+      placePiece(i, playerTurn);
     }, Math.random() * 300 + 200);
     return () => clearTimeout(id);
   }, [playerTurn]);
