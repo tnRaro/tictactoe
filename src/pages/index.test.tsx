@@ -11,6 +11,7 @@ beforeEach(async () => {
 
   return () => {
     unmount();
+    gameStore.setState(gameStore.getInitialState());
   }
 });
 
