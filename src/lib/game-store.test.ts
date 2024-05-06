@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { GameState, PlayerTurn, gameStore } from "./game";
+import { GameState, PlayerTurn } from "./game";
+import { gameStore } from "./game-store";
 
 beforeEach(() => {
   const store = gameStore;

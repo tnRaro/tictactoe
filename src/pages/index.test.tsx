@@ -1,6 +1,7 @@
 import { test, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Page from ".";
+import { gameStore } from "../lib/game-store";
 
 let buttons: HTMLButtonElement[];
 

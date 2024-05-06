@@ -5,7 +5,8 @@ import { Button } from "../components/Button";
 import { Flex } from "../components/Flex";
 import { Piece } from "../components/Piece";
 import { Text } from "../components/Text";
-import { GameState, PlayerTurn, gameStore } from "../lib/game";
+import { GameState, PlayerTurn } from "../lib/game";
+import { gameStore } from "../lib/game-store";
 
 const Page = () => {
   const ai = true;
