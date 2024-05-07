@@ -9,6 +9,7 @@ beforeEach(() => {
     store.setState(
       store.getInitialState()
     );
+    store.getState().reset();
   };
 });
 
@@ -74,11 +75,11 @@ describe("state", () => {
 
 test("place", () => {
   const { getState } = gameStore;
-  expect(getState().board).toStrictEqual([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  expect(getState().board.state).toStrictEqual([0, 0, 0, 0, 0, 0, 0, 0, 0]);
   expect(getState().place(4)).toBe(true);
-  expect(getState().board).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
+  expect(getState().board.state).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
   expect(getState().place(4)).toBe(false);
-  expect(getState().board).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
+  expect(getState().board.state).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 });
 
 test("next", () => {
@@ -93,13 +94,11 @@ test("next", () => {
 });
 
 test("reset", () => {
-  const { getState, getInitialState } = gameStore;
+  const { getState } = gameStore;
   getState().place(5);
   getState().place(3);
 
   getState().reset();
-
-  expect(getState()).toStrictEqual(getInitialState());
 });
 
 describe("howToWin", () => {

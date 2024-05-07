@@ -13,6 +13,7 @@ beforeEach(async () => {
   return () => {
     unmount();
     gameStore.setState(gameStore.getInitialState());
+    gameStore.getState().reset();
   }
 });
 

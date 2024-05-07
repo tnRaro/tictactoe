@@ -1,4 +1,3 @@
-import React from "react";
 import { useStore } from "zustand";
 import { Board } from "../components/Board";
 import { Button } from "../components/Button";
@@ -22,7 +21,7 @@ const Page = () => {
           <Text>{"'s turn"}</Text>
         </Flex>
         <Board>
-          {board.map((piece, index) => {
+          {board.state.map((piece, index) => {
             return (
               <Piece
                 key={index}
