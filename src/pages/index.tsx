@@ -17,11 +17,11 @@ const Page = () => {
     <>
       <Flex direction="vertical" align="center" gap="1" grow="1">
         <Flex align="center">
-          <Piece as="div" type={turn} css={{ width: "1rem", height: "1rem" }} />
+          <Piece as="div" type={turn()} css={{ width: "1rem", height: "1rem" }} />
           <Text>{"'s turn"}</Text>
         </Flex>
         <Board>
-          {board.state.map((piece, index) => {
+          {board().map((piece, index) => {
             return (
               <Piece
                 key={index}
@@ -29,7 +29,7 @@ const Page = () => {
                 onClick={() => {
                   if (s !== GameState.Playing) return;
                   if (ai) {
-                    if (turn !== PlayerTurn.P1) {
+                    if (turn() !== PlayerTurn.P1) {
                       return;
                     }
                   }

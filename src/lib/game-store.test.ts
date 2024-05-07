@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { GameState, PlayerTurn } from "./game";
+import { GameState } from "./game";
 import { gameStore } from "./game-store";
 
 beforeEach(() => {
@@ -75,22 +75,11 @@ describe("state", () => {
 
 test("place", () => {
   const { getState } = gameStore;
-  expect(getState().board.state).toStrictEqual([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  expect(getState().board()).toStrictEqual([0, 0, 0, 0, 0, 0, 0, 0, 0]);
   expect(getState().place(4)).toBe(true);
-  expect(getState().board.state).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
+  expect(getState().board()).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
   expect(getState().place(4)).toBe(false);
-  expect(getState().board.state).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
-});
-
-test("next", () => {
-  const { getState } = gameStore;
-  expect(getState().turn).toBe(PlayerTurn.P1);
-  getState().next();
-  expect(getState().turn).toBe(PlayerTurn.P2);
-  getState().next();
-  expect(getState().turn).toBe(PlayerTurn.P1);
-  getState().next();
-  expect(getState().turn).toBe(PlayerTurn.P2);
+  expect(getState().board()).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 });
 
 test("reset", () => {
