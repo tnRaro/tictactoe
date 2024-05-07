@@ -1,3 +1,5 @@
+import { Board } from "./board";
+
 export const WinPatterns = [7, 56, 448, 73, 146, 292, 273, 84];
 
 export const enum PlayerTurn {
@@ -16,6 +18,47 @@ export const enum BoardState {
   None = 0,
   P1 = 1,
   P2 = 3,
+}
+
+export class Game {
+  private _board = new Board();
+  private _turn: PlayerTurn = PlayerTurn.P1;
+
+  get board() {
+    return this._board;
+  }
+  get turn() {
+    return this._turn;
+  }
+  set turn(value: PlayerTurn) {
+    this._turn = value;
+  }
+  get state() {
+    if (this.isWon(PlayerTurn.P1)) return GameState.P1Won;
+    if (this.isWon(PlayerTurn.P2)) return GameState.P2Won;
+    if (this.isDraw()) return GameState.Draw;
+    return GameState.Playing;
+  }
+  private isWon(turn: PlayerTurn) {
+    const pattern = this._board.stateOf(turn);
+    return WinPatterns.some((p) => (pattern & p) === p);
+  }
+  private isDraw() {
+    return this._board.isSerried();
+  }
+
+  place(index: number) {
+    if (this.state !== GameState.Playing) return;
+    if (!this._board.isEmpty(index)) return;
+    this._board.place(index, boardStateFor(this._turn));
+    this._turn = adversaryFor(this._turn);
+  }
+  placeAi() {
+    const index = pickAi(this._board.state, this._turn, Math.random());
+    if (index != null) {
+      this.place(index);
+    }
+  }
 }
 
 export function boardStateFor(turn: PlayerTurn) {
