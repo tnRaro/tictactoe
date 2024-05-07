@@ -3,7 +3,7 @@ import { createStore } from "zustand";
 import { GameState, PlayerTurn, WinPatterns, adversaryFor, boardStateFor, pickAi, subset } from "./game";
 import { Board } from "./board";
 
-export interface Game {
+export interface GameStore {
   board: Board;
   turn: PlayerTurn;
   state: () => GameState;
@@ -14,7 +14,7 @@ export interface Game {
   howToWin: () => number | undefined;
 }
 
-export const gameStore = createStore<Game>((set, get) => ({
+export const gameStore = createStore<GameStore>((set, get) => ({
   board: new Board(),
   turn: PlayerTurn.P1,
   state: () => {
@@ -38,12 +38,12 @@ export const gameStore = createStore<Game>((set, get) => ({
   })),
   place: (n: number) => {
     if (!get().board.isEmpty(n)) return false;
-    set(produce((state: Game) => {
+    set(produce((state: GameStore) => {
       state.board.place(n, boardStateFor(state.turn));
     }));
     return true;
   },
-  actAi: () => set(produce((state: Game) => {
+  actAi: () => set(produce((state: GameStore) => {
     if (state.state() !== GameState.Playing) return;
     const index = pickAi(state.board.state, state.turn, Math.random());
     if (index != null) {
