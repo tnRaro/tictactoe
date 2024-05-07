@@ -1,11 +1,12 @@
 import { produce } from "immer";
 import { createStore } from "zustand";
-import { GameState, PlayerTurn, WinPatterns, adversaryFor, boardStateFor, pickAi, subset } from "./game";
+import { Game, GameState, PlayerTurn, WinPatterns, adversaryFor, boardStateFor, pickAi, subset } from "./game";
 import { Board } from "./board";
 
 export interface GameStore {
   board: Board;
   turn: PlayerTurn;
+  _game: Game;
   state: () => GameState;
   reset: () => void;
   place: (n: number) => boolean;
@@ -17,6 +18,7 @@ export interface GameStore {
 export const gameStore = createStore<GameStore>((set, get) => ({
   board: new Board(),
   turn: PlayerTurn.P1,
+  _game: new Game(),
   state: () => {
     if (isWon(PlayerTurn.P1)) return GameState.P1Won;
     if (isWon(PlayerTurn.P2)) return GameState.P2Won;
@@ -35,6 +37,7 @@ export const gameStore = createStore<GameStore>((set, get) => ({
   reset: () => set(() => ({
     board: new Board(),
     turn: PlayerTurn.P1,
+    _game: new Game(),
   })),
   place: (n: number) => {
     if (!get().board.isEmpty(n)) return false;
