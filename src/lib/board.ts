@@ -13,18 +13,18 @@ export class Board {
     return this._state.every((piece) => piece !== BoardState.None);
   }
   isEmpty(index: number) {
-    this.guardBound(index);
+    this.guardRange(index);
     return this._state[index] === BoardState.None;
   }
   place(index: number, state: BoardState) {
-    this.guardBound(index);
+    this.guardRange(index);
     this._state[index] = state;
   }
-  isInBound(index: number) {
+  isInRange(index: number) {
     return index >= 0 && index < 9;
   }
-  guardBound(index: number) {
-    if (this.isInBound(index)) return true;
+  guardRange(index: number) {
+    if (this.isInRange(index)) return true;
     throw new RangeError(`out of range: 0 <= ${index} < 9`);
   }
   stateOf(player: PlayerTurn) {
