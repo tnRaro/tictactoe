@@ -17,17 +17,17 @@ beforeEach(async () => {
   }
 });
 
-test("", async () => {
+test("initial", async () => {
   expect(buttons.every(button => button.classList.length === 1)).toStrictEqual(true);
 })
 
-test("", async () => {
+test("place", async () => {
   fireEvent.click(buttons[4]);
 
   expect(buttons.map(x => [...x.classList].filter(x => /-type-[13]$/.test(x)).map(x => x.match(/[13]$/)![0]).join("")))
     .toStrictEqual(["", "", "", "", "1", "", "", "", ""]);
 })
 
-test("", async () => {
+test("initial", async () => {
   expect(buttons.every(button => button.classList.length === 1)).toStrictEqual(true);
 })
