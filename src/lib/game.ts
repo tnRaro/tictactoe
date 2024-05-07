@@ -18,6 +18,37 @@ export const enum BoardState {
   P2 = 3,
 }
 
+export class Board {
+  state: BoardState[] = [
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0,
+  ];
+  isSerried() {
+    return this.state.every((piece) => piece !== BoardState.None);
+  }
+  isEmpty(index: number) {
+    this.guardBound(index);
+    return this.state[index] === BoardState.None;
+  }
+  place(index: number, state: BoardState) {
+    this.guardBound(index);
+    this.state[index] = state;
+  }
+  isInBound(index: number) {
+    return index < 0 || index >= 9
+  }
+  guardBound(index: number) {
+    if (this.isInBound(index)) return true;
+    throw new RangeError(`out of range: 0 <= ${index} < 9`);
+  }
+  stateOf(player: PlayerTurn) {
+    return this.state
+      .map((piece) => +(piece === boardStateFor(player)))
+      .reduce((acc, piece, index) => acc | (piece << index), 0);
+  }
+}
+
 export function boardStateFor(turn: PlayerTurn) {
   if (turn === PlayerTurn.P1) return BoardState.P1;
   if (turn === PlayerTurn.P2) return BoardState.P2;
