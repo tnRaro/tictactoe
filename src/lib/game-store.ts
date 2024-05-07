@@ -12,7 +12,6 @@ export interface Game {
   actAi: () => void;
   next: () => void;
   howToWin: () => number | undefined;
-  _placedPieces: (turn: PlayerTurn) => number;
 }
 
 export const gameStore = createStore<Game>((set, get) => ({
@@ -25,16 +24,13 @@ export const gameStore = createStore<Game>((set, get) => ({
     return GameState.Playing;
 
     function isWon(turn: PlayerTurn) {
-      const pattern = get()._placedPieces(turn);
+      const pattern = get().board.stateOf(turn);
       return WinPatterns.some((p) => (pattern & p) === p);
 
     }
     function isDraw() {
       return get().board.isSerried() // and nobody won
     }
-  },
-  _placedPieces(turn) {
-    return get().board.stateOf(turn);
   },
   reset: () => set(() => ({
     board: new Board(),
