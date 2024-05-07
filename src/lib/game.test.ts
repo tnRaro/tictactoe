@@ -75,3 +75,26 @@ test("place", () => {
   game().place(4);
   expect(game().board.state).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 });
+
+describe("howToWin", () => {
+  test("human win", () => {
+    run([4, 5, 0, 8, 2, 6, 1,]);
+    expect(game().howToWin()).toBe(7);
+  })
+
+  test("ai win", () => {
+    run([0, 3, 1, 2, 6, 4, 7, 5,]);
+    expect(game().howToWin()).toBe(56);
+  })
+
+  test("draw", () => {
+    run([4, 0, 2, 6, 3, 5, 7, 1, 8,]);
+    expect(game().howToWin()).toBeUndefined();
+  })
+
+  function run(scenario: number[]) {
+    scenario.forEach((pos) => {
+      game().place(pos);
+    });
+  }
+})

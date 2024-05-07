@@ -59,8 +59,19 @@ export class Game {
       this.place(index);
     }
   }
+  howToWin() {
+    const state = this.state;
+    if (state !== GameState.P1Won && state !== GameState.P2Won) return;
+    const p = this.board.stateOf(playerTurnFor(state));
+    return WinPatterns.find((pattern) => subset(pattern, p));
+  }
 }
 
+export function playerTurnFor(state: GameState) {
+  if (state === GameState.P1Won) return PlayerTurn.P1;
+  if (state === GameState.P2Won) return PlayerTurn.P2;
+  throw new Error(`unexpected game state: ${state}`);
+}
 export function boardStateFor(turn: PlayerTurn) {
   if (turn === PlayerTurn.P1) return BoardState.P1;
   if (turn === PlayerTurn.P2) return BoardState.P2;
