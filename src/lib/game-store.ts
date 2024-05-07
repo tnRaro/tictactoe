@@ -1,6 +1,7 @@
 import { produce } from "immer";
 import { createStore } from "zustand";
-import { Board, GameState, PlayerTurn, WinPatterns, adversaryFor, boardStateFor, pickAi, subset } from "./game";
+import { GameState, PlayerTurn, WinPatterns, adversaryFor, boardStateFor, pickAi, subset } from "./game";
+import { Board } from "./board";
 
 export interface Game {
   board: Board;
