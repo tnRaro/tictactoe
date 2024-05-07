@@ -30,10 +30,10 @@ export const gameStore = createStore<GameStore>((set, get) => ({
     set((state) => ({ _game: state._game }));
     return true;
   },
-  actAi: () => set(produce((state: GameStore) => {
-    state._game.placeAi();
+  actAi: () => {
+    get()._game.placeAi();
     set((state) => ({ _game: state._game }));
-  })),
+  },
   next: () => { },
   howToWin: () => {
     return get()._game.howToWin();
